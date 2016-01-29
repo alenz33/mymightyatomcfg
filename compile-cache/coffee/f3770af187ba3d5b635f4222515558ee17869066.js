@@ -1,0 +1,70 @@
+(function() {
+  var $, SplitView, View, _ref,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  _ref = require('space-pen'), $ = _ref.$, View = _ref.View;
+
+  module.exports = SplitView = (function() {
+    SplitView.prototype.last_ratio = 0.5;
+
+    function SplitView(bar) {
+      this.bar = bar;
+      this.childResize = __bind(this.childResize, this);
+      this.childResizeStopped = __bind(this.childResizeStopped, this);
+      this.childResizeStarted = __bind(this.childResizeStarted, this);
+      this.parent = this.bar.parent();
+      this.child_a = this.bar.prev();
+      this.child_b = this.bar.next();
+      this.bar.on('mousedown', (function(_this) {
+        return function(e) {
+          return _this.childResizeStarted(e);
+        };
+      })(this));
+      this.setRatio(0.5);
+    }
+
+    SplitView.prototype.childResizeStarted = function(event) {
+      this.start_pageY = this.bar.offset().top + this.bar.outerHeight() - event.pageY;
+      $(document).on('mousemove', this.childResize);
+      return $(document).on('mouseup', this.childResizeStopped);
+    };
+
+    SplitView.prototype.childResizeStopped = function() {
+      $(document).off('mousemove', this.childResize);
+      return $(document).off('mouseup', this.childResizeStopped);
+    };
+
+    SplitView.prototype.childResize = function(_arg) {
+      var pageY, ratio, total, which;
+      pageY = _arg.pageY, which = _arg.which;
+      if (which !== 1) {
+        return this.childResizeStopped();
+      }
+      total = this.child_a.outerHeight() + this.child_b.outerHeight();
+      ratio = ((pageY - this.child_a.offset().top) + (this.start_pageY / 2 - this.bar.outerHeight())) / total;
+      return this.setRatio(ratio);
+    };
+
+    SplitView.prototype.setRatio = function(ratio) {
+      if (ratio == null) {
+        ratio = this.last_ratio;
+      }
+      this.child_a.css('flex', ratio.toString());
+      this.child_b.css('flex', (1.0 - ratio).toString());
+      return this.last_ratio = ratio;
+    };
+
+    SplitView.prototype.full_a = function() {
+      this.child_a.css('flex', '1.0');
+      return this.child_b.css('flex', '0.0');
+    };
+
+    return SplitView;
+
+  })();
+
+}).call(this);
+
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAiZmlsZSI6ICIiLAogICJzb3VyY2VSb290IjogIiIsCiAgInNvdXJjZXMiOiBbCiAgICAiL2hvbWUvYWxlbnovLmF0b20vcGFja2FnZXMvcHl0aG9uLW5vc2V0ZXN0cy9saWIvc3BsaXR2aWV3LmNvZmZlZSIKICBdLAogICJuYW1lcyI6IFtdLAogICJtYXBwaW5ncyI6ICJBQUNBO0FBQUEsTUFBQSx3QkFBQTtJQUFBLGtGQUFBOztBQUFBLEVBQUEsT0FBWSxPQUFBLENBQVEsV0FBUixDQUFaLEVBQUMsU0FBQSxDQUFELEVBQUksWUFBQSxJQUFKLENBQUE7O0FBQUEsRUFFQSxNQUFNLENBQUMsT0FBUCxHQUNNO0FBRUosd0JBQUEsVUFBQSxHQUFZLEdBQVosQ0FBQTs7QUFFYSxJQUFBLG1CQUFFLEdBQUYsR0FBQTtBQUNYLE1BRFksSUFBQyxDQUFBLE1BQUEsR0FDYixDQUFBO0FBQUEsdURBQUEsQ0FBQTtBQUFBLHFFQUFBLENBQUE7QUFBQSxxRUFBQSxDQUFBO0FBQUEsTUFBQSxJQUFDLENBQUEsTUFBRCxHQUFVLElBQUMsQ0FBQSxHQUFHLENBQUMsTUFBTCxDQUFBLENBQVYsQ0FBQTtBQUFBLE1BQ0EsSUFBQyxDQUFBLE9BQUQsR0FBVyxJQUFDLENBQUEsR0FBRyxDQUFDLElBQUwsQ0FBQSxDQURYLENBQUE7QUFBQSxNQUVBLElBQUMsQ0FBQSxPQUFELEdBQVcsSUFBQyxDQUFBLEdBQUcsQ0FBQyxJQUFMLENBQUEsQ0FGWCxDQUFBO0FBQUEsTUFJQSxJQUFDLENBQUEsR0FBRyxDQUFDLEVBQUwsQ0FBUSxXQUFSLEVBQXFCLENBQUEsU0FBQSxLQUFBLEdBQUE7ZUFBQSxTQUFDLENBQUQsR0FBQTtpQkFBTyxLQUFDLENBQUEsa0JBQUQsQ0FBb0IsQ0FBcEIsRUFBUDtRQUFBLEVBQUE7TUFBQSxDQUFBLENBQUEsQ0FBQSxJQUFBLENBQXJCLENBSkEsQ0FBQTtBQUFBLE1BTUEsSUFBQyxDQUFBLFFBQUQsQ0FBVSxHQUFWLENBTkEsQ0FEVztJQUFBLENBRmI7O0FBQUEsd0JBV0Esa0JBQUEsR0FBb0IsU0FBQyxLQUFELEdBQUE7QUFFbEIsTUFBQSxJQUFDLENBQUEsV0FBRCxHQUFlLElBQUMsQ0FBQSxHQUFHLENBQUMsTUFBTCxDQUFBLENBQWEsQ0FBQyxHQUFkLEdBQW9CLElBQUMsQ0FBQSxHQUFHLENBQUMsV0FBTCxDQUFBLENBQXBCLEdBQXlDLEtBQUssQ0FBQyxLQUE5RCxDQUFBO0FBQUEsTUFFQSxDQUFBLENBQUUsUUFBRixDQUFXLENBQUMsRUFBWixDQUFlLFdBQWYsRUFBNEIsSUFBQyxDQUFBLFdBQTdCLENBRkEsQ0FBQTthQUdBLENBQUEsQ0FBRSxRQUFGLENBQVcsQ0FBQyxFQUFaLENBQWUsU0FBZixFQUEwQixJQUFDLENBQUEsa0JBQTNCLEVBTGtCO0lBQUEsQ0FYcEIsQ0FBQTs7QUFBQSx3QkFrQkEsa0JBQUEsR0FBb0IsU0FBQSxHQUFBO0FBQ2xCLE1BQUEsQ0FBQSxDQUFFLFFBQUYsQ0FBVyxDQUFDLEdBQVosQ0FBZ0IsV0FBaEIsRUFBNkIsSUFBQyxDQUFBLFdBQTlCLENBQUEsQ0FBQTthQUNBLENBQUEsQ0FBRSxRQUFGLENBQVcsQ0FBQyxHQUFaLENBQWdCLFNBQWhCLEVBQTJCLElBQUMsQ0FBQSxrQkFBNUIsRUFGa0I7SUFBQSxDQWxCcEIsQ0FBQTs7QUFBQSx3QkFzQkEsV0FBQSxHQUFhLFNBQUMsSUFBRCxHQUFBO0FBQ1gsVUFBQSwwQkFBQTtBQUFBLE1BRGEsYUFBQSxPQUFPLGFBQUEsS0FDcEIsQ0FBQTtBQUFBLE1BQUEsSUFBb0MsS0FBQSxLQUFTLENBQTdDO0FBQUEsZUFBTyxJQUFDLENBQUEsa0JBQUQsQ0FBQSxDQUFQLENBQUE7T0FBQTtBQUFBLE1BRUEsS0FBQSxHQUFRLElBQUMsQ0FBQSxPQUFPLENBQUMsV0FBVCxDQUFBLENBQUEsR0FBeUIsSUFBQyxDQUFBLE9BQU8sQ0FBQyxXQUFULENBQUEsQ0FGakMsQ0FBQTtBQUFBLE1BR0EsS0FBQSxHQUFRLENBQUMsQ0FBQyxLQUFBLEdBQVEsSUFBQyxDQUFBLE9BQU8sQ0FBQyxNQUFULENBQUEsQ0FBaUIsQ0FBQyxHQUEzQixDQUFBLEdBQWtDLENBQUMsSUFBQyxDQUFBLFdBQUQsR0FBZSxDQUFmLEdBQW1CLElBQUMsQ0FBQSxHQUFHLENBQUMsV0FBTCxDQUFBLENBQXBCLENBQW5DLENBQUEsR0FBOEUsS0FIdEYsQ0FBQTthQUtBLElBQUMsQ0FBQSxRQUFELENBQVUsS0FBVixFQU5XO0lBQUEsQ0F0QmIsQ0FBQTs7QUFBQSx3QkFnQ0EsUUFBQSxHQUFVLFNBQUMsS0FBRCxHQUFBO0FBQ1IsTUFBQSxJQUFPLGFBQVA7QUFDRSxRQUFBLEtBQUEsR0FBUSxJQUFDLENBQUEsVUFBVCxDQURGO09BQUE7QUFBQSxNQUdBLElBQUMsQ0FBQSxPQUFPLENBQUMsR0FBVCxDQUFhLE1BQWIsRUFBcUIsS0FBSyxDQUFDLFFBQU4sQ0FBQSxDQUFyQixDQUhBLENBQUE7QUFBQSxNQUlBLElBQUMsQ0FBQSxPQUFPLENBQUMsR0FBVCxDQUFhLE1BQWIsRUFBcUIsQ0FBQyxHQUFBLEdBQUksS0FBTCxDQUFXLENBQUMsUUFBWixDQUFBLENBQXJCLENBSkEsQ0FBQTthQUtBLElBQUMsQ0FBQSxVQUFELEdBQWUsTUFOUDtJQUFBLENBaENWLENBQUE7O0FBQUEsd0JBeUNBLE1BQUEsR0FBUSxTQUFBLEdBQUE7QUFDTixNQUFBLElBQUMsQ0FBQSxPQUFPLENBQUMsR0FBVCxDQUFhLE1BQWIsRUFBcUIsS0FBckIsQ0FBQSxDQUFBO2FBQ0EsSUFBQyxDQUFBLE9BQU8sQ0FBQyxHQUFULENBQWEsTUFBYixFQUFxQixLQUFyQixFQUZNO0lBQUEsQ0F6Q1IsQ0FBQTs7cUJBQUE7O01BTEYsQ0FBQTtBQUFBIgp9
+
+//# sourceURL=/home/alenz/.atom/packages/python-nosetests/lib/splitview.coffee

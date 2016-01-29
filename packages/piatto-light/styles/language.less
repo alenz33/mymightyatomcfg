@@ -1,0 +1,190 @@
+// ---------------
+//     BASICS
+// ---------------
+
+.basic {
+  color: @syntax-text-color;
+}
+
+.comment {
+  color: @grey;
+}
+
+.string {
+  color: @orange;
+}
+
+.constant {
+  color: @violet;
+}
+
+// Booleans in color
+  .boolean {
+    font-weight: bold;
+    &.true {
+      color: @dark-green;
+    }
+    &.false {
+      color: @red;
+    }
+  }
+
+.variable, .support.class.php {
+  color: @dark-green;
+}
+
+.keyword, .support.function.construct.php {
+  color: @blue;
+}
+
+.storage {
+  color: @dark-grey;
+}
+
+.storage.type, .meta.function-call.php {
+  color: @dark-violet;
+}
+
+.entity.name.class {
+  color: @dark-green;
+}
+
+.entity.other.inherited-class {
+  color: @dark-green;
+}
+
+.entity.name.function {
+  color: @dark-green;
+}
+
+.variable.parameter, .keyword.operator.class.php {
+  color: @orange;
+}
+
+.entity.name.tag, .punctuation.definition.tag,
+.meta.tag.sgml.html {
+  color: @blue;
+}
+
+.entity.other.attribute-name {
+  color: @dark-green;
+}
+
+.support.function {
+  color: @dark-violet;
+}
+
+.support.constant {
+  color: @dark-violet;
+}
+
+.support.type, .support.class {
+  color: @orange;
+}
+
+.support.other.variable {
+  color: @light-black;
+}
+
+.invalid {
+  color: @white;
+  background-color: @red;
+}
+
+.markup.deleted {
+  color: @dark-pink;
+}
+
+.markup.inserted {
+  color: @dark-green;
+}
+
+.markup.heading {
+  font-weight: bold;
+  color: @dark-pink;
+}
+
+.markup.italic {
+  font-style: italic;
+}
+
+.markup.bold {
+  font-weight: bold;
+}
+
+.markup.underline {
+  text-decoration: underline;
+}
+
+.markup.quote, .punctuation.definition.blockquote {
+  font-style: italic;
+  color: @dark-grey;
+}
+
+.markup.list {
+  color: @dark-grey;
+}
+
+.markup.raw, .markup.raw.block.markdown {
+  color: @green;
+}
+
+// ---------------
+//      HTML
+// ---------------
+
+
+.entity.name.tag.doctype.html {
+  color: @black;
+}
+
+
+// ---------------
+//   CSS & LESS
+// ---------------
+
+// @media in blue
+.media.css, .media.css > .keyword {
+  color: @blue;
+  font-weight: bold;
+}
+
+// hightlight less vars
+.variable.less {
+  background-color: fade(@green, 10%);
+  font-style: italic;
+}
+
+// ---------------
+//    MARKDOWN
+// ---------------
+
+// different colors for every heading
+
+.markup.heading-1, .markup.heading-1 > .marker {
+  color: @pink;
+}
+.markup.heading-2, .markup.heading-2 > .marker  {
+  color: @dark-pink;
+}
+.markup.heading-3, .markup.heading-3 > .marker  {
+  color: @blue;
+}
+.markup.heading-4, .markup.heading-4 > .marker  {
+  color: @blue;
+  font-weight: normal;
+}
+.markup.heading-5, .markup.heading-5 > .marker  {
+  color: @dark-grey;
+}
+.markup.heading-6, .markup.heading-6 > .marker  {
+  color: @dark-grey;
+  font-weight: normal;
+}
+
+
+// blue link, grey punctuation
+
+.link > .punctuation {
+  color: @grey;
+}

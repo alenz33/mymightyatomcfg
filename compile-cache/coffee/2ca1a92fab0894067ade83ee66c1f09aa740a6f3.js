@@ -1,0 +1,312 @@
+(function() {
+  var Range, configs, helper, operatorConfig, path;
+
+  helper = require('../lib/helper');
+
+  operatorConfig = require('../lib/operator-config');
+
+  path = require('path');
+
+  configs = require('../config');
+
+  Range = require('atom').Range;
+
+  describe("Helper", function() {
+    var config, editor;
+    editor = null;
+    config = null;
+    beforeEach(function() {
+      atom.project.setPaths([path.join(__dirname, 'fixtures')]);
+      waitsForPromise(function() {
+        return atom.packages.activatePackage('language-coffee-script');
+      });
+      waitsForPromise(function() {
+        return atom.packages.activatePackage('aligner');
+      });
+      waitsForPromise(function() {
+        return atom.workspace.open('helper-sample.coffee').then(function(o) {
+          return editor = o;
+        });
+      });
+      return runs(function() {
+        return config = operatorConfig.getConfig('=');
+      });
+    });
+    describe("getSameIndentationRange", function() {
+      describe("should include comments", function() {
+        var offsets, range, _ref;
+        _ref = [], range = _ref[0], offsets = _ref[1];
+        beforeEach(function() {
+          var _ref1;
+          return _ref1 = helper.getSameIndentationRange(editor, 23, ':'), range = _ref1.range, offsets = _ref1.offsets, _ref1;
+        });
+        it("should get the valid start row", function() {
+          return expect(range.start.row).toBe(22);
+        });
+        it("should get the valid end row", function() {
+          return expect(range.end.row).toBe(32);
+        });
+        return it("should get the valid offset", function() {
+          return expect(offsets).toEqual([8]);
+        });
+      });
+      describe("should return valid range object when cursor is in the middle", function() {
+        var offsets, range, _ref;
+        _ref = [], range = _ref[0], offsets = _ref[1];
+        beforeEach(function() {
+          var _ref1;
+          return _ref1 = helper.getSameIndentationRange(editor, 2, "="), range = _ref1.range, offsets = _ref1.offsets, _ref1;
+        });
+        it("should get the valid start row", function() {
+          return expect(range.start.row).toBe(1);
+        });
+        it("should get the valid end row", function() {
+          return expect(range.end.row).toBe(3);
+        });
+        return it("should get the valid offset", function() {
+          return expect(offsets).toEqual([7]);
+        });
+      });
+      describe("should return valid range object when cursor is on the last line", function() {
+        var offsets, range, _ref;
+        _ref = [], range = _ref[0], offsets = _ref[1];
+        beforeEach(function() {
+          var _ref1;
+          return _ref1 = helper.getSameIndentationRange(editor, 3, "="), range = _ref1.range, offsets = _ref1.offsets, _ref1;
+        });
+        it("should get the valid start row", function() {
+          return expect(range.start.row).toBe(1);
+        });
+        it("should get the valid end row", function() {
+          return expect(range.end.row).toBe(3);
+        });
+        return it("should get the valid offset", function() {
+          return expect(offsets).toEqual([7]);
+        });
+      });
+      return describe("should return valid range object when cursor is on the first line", function() {
+        var offsets, range, _ref;
+        _ref = [], range = _ref[0], offsets = _ref[1];
+        beforeEach(function() {
+          var _ref1;
+          return _ref1 = helper.getSameIndentationRange(editor, 1, "="), range = _ref1.range, offsets = _ref1.offsets, _ref1;
+        });
+        it("should get the valid start row", function() {
+          return expect(range.start.row).toBe(1);
+        });
+        it("should get the valid end row", function() {
+          return expect(range.end.row).toBe(3);
+        });
+        return it("should get the valid offset", function() {
+          return expect(offsets).toEqual([7]);
+        });
+      });
+    });
+    describe("getAlignCharacter", function() {
+      var grammar;
+      grammar = null;
+      beforeEach(function() {
+        return grammar = editor.getGrammar();
+      });
+      it("should get the = character", function() {
+        var character;
+        character = helper.getAlignCharacter(editor, 1);
+        return expect(character).toBe("=");
+      });
+      it("should get the : character", function() {
+        var character;
+        character = helper.getAlignCharacter(editor, 7);
+        return expect(character).toBe(":");
+      });
+      it("should get the , character", function() {
+        var character;
+        character = helper.getAlignCharacter(editor, 13);
+        return expect(character).toBe(",");
+      });
+      return it("should not find anything", function() {
+        var character;
+        character = helper.getAlignCharacter(editor, 4);
+        return expect(character).not.toBeDefined();
+      });
+    });
+    describe("getAlignCharacterInRanges", function() {
+      var grammar;
+      grammar = null;
+      beforeEach(function() {
+        return grammar = editor.getGrammar();
+      });
+      it("should get the = character", function() {
+        var character, ranges;
+        ranges = [new Range([1, 0], [3, 0])];
+        character = helper.getAlignCharacterInRanges(editor, ranges);
+        return expect(character).toBe("=");
+      });
+      it("should get the : character", function() {
+        var character, ranges;
+        ranges = [new Range([7, 0], [9, 0])];
+        character = helper.getAlignCharacterInRanges(editor, ranges);
+        return expect(character).toBe(":");
+      });
+      it("should get the , character", function() {
+        var character, ranges;
+        ranges = [new Range([13, 0], [15, 0])];
+        character = helper.getAlignCharacterInRanges(editor, ranges);
+        return expect(character).toBe(",");
+      });
+      return it("should not find anything", function() {
+        var character, ranges;
+        ranges = [new Range([34, 0], [35, 0])];
+        character = helper.getAlignCharacterInRanges(editor, ranges);
+        return expect(character).not.toBeDefined();
+      });
+    });
+    return describe("parseTokenizedLine", function() {
+      var grammar;
+      grammar = null;
+      beforeEach(function() {
+        return grammar = editor.getGrammar();
+      });
+      describe("parsing a valid line", function() {
+        var output;
+        output = null;
+        beforeEach(function() {
+          var line;
+          line = grammar.tokenizeLine(editor.lineTextForBufferRow(2));
+          return output = helper.parseTokenizedLine(line, "=", config);
+        });
+        it("should get the text before = with right trimmed", function() {
+          return expect(output.sections[0].before).toBe("  hello");
+        });
+        it("should get the text after = with left trimmed", function() {
+          return expect(output.sections[0].after).toBe('"world"');
+        });
+        it("should get the offset", function() {
+          return expect(output.sections[0].offset).toBe(7);
+        });
+        it("should return no prefix", function() {
+          return expect(output.hasPrefix()).toBe(false);
+        });
+        return it("should show the line is valid", function() {
+          return expect(output.isValid()).toBe(true);
+        });
+      });
+      describe("parsing an invalid line", function() {
+        var output;
+        output = null;
+        beforeEach(function() {
+          var line;
+          grammar = editor.getGrammar();
+          line = grammar.tokenizeLine(editor.lineTextForBufferRow(4));
+          return output = helper.parseTokenizedLine(line, "=", config);
+        });
+        return it("should show the line is invalid", function() {
+          return expect(output.isValid()).toBe(false);
+        });
+      });
+      describe("parsing a line with prefix", function() {
+        var output;
+        output = null;
+        beforeEach(function() {
+          var line;
+          grammar = editor.getGrammar();
+          line = grammar.tokenizeLine(editor.lineTextForBufferRow(9));
+          return output = helper.parseTokenizedLine(line, "-=", config);
+        });
+        it("should show the line is valid", function() {
+          return expect(output.isValid()).toBe(true);
+        });
+        it("should return the correct prefix", function() {
+          return expect(output.hasPrefix()).toBe(true);
+        });
+        it("should get the text before = with right trimmed", function() {
+          return expect(output.sections[0].before).toBe("prefix");
+        });
+        it("should get the text after = with left trimmed", function() {
+          return expect(output.sections[0].after).toBe('1');
+        });
+        return it("should get the offset", function() {
+          return expect(output.sections[0].offset).toBe(6);
+        });
+      });
+      describe("parsing a line with leading and/or trailing whitespaces", function() {
+        var output;
+        output = null;
+        beforeEach(function() {
+          return atom.config.set('editor.showInvisibles', true);
+        });
+        afterEach(function() {
+          atom.config.set('editor.showInvisibles', false);
+          return atom.config.set('editor.softTabs', true);
+        });
+        it("should include leading whitespaces", function() {
+          var line;
+          line = editor.displayBuffer.tokenizedBuffer.tokenizedLineForRow(17);
+          output = helper.parseTokenizedLine(line, "=", config);
+          expect(output.sections[0].before).toBe("        testing");
+          return expect(output.sections[0].after).toBe("123");
+        });
+        it("should include trailing whitespaces", function() {
+          var line;
+          line = editor.displayBuffer.tokenizedBuffer.tokenizedLineForRow(18);
+          output = helper.parseTokenizedLine(line, "=", config);
+          expect(output.sections[0].before).toBe("        test");
+          return expect(output.sections[0].after).toBe("'abc'      ");
+        });
+        return it("should handle tabs correctly", function() {
+          var line;
+          line = editor.displayBuffer.tokenizedBuffer.tokenizedLineForRow(36);
+          output = helper.parseTokenizedLine(line, "=", config);
+          expect(output.sections[0].before).toBe("				testing");
+          return expect(output.sections[0].after).toBe("123");
+        });
+      });
+      return describe("parsing a line with multiple characters", function() {
+        var output;
+        output = null;
+        beforeEach(function() {
+          var commaConfig, line;
+          commaConfig = {
+            leftSpace: true,
+            rightSpace: false,
+            scope: "delimiter",
+            multiple: {
+              number: {
+                alignment: "left"
+              },
+              string: {
+                alignment: "right"
+              }
+            }
+          };
+          grammar = editor.getGrammar();
+          line = grammar.tokenizeLine(editor.lineTextForBufferRow(13));
+          return output = helper.parseTokenizedLine(line, ",", commaConfig);
+        });
+        it("should show the line is valid", function() {
+          return expect(output.isValid()).toBe(true);
+        });
+        it("should parsed out 3 items", function() {
+          return expect(output.sections.length).toBe(3);
+        });
+        it("should not have any prefix", function() {
+          return expect(output.hasPrefix()).toBe(false);
+        });
+        return it("should have content in before for all items", function() {
+          var content;
+          content = true;
+          output.sections.forEach(function(item) {
+            if (item.before.length === 0) {
+              return content = false;
+            }
+          });
+          return expect(content).toBeTruthy();
+        });
+      });
+    });
+  });
+
+}).call(this);
+
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAiZmlsZSI6ICIiLAogICJzb3VyY2VSb290IjogIiIsCiAgInNvdXJjZXMiOiBbCiAgICAiL2hvbWUvYWxlbnovLmF0b20vcGFja2FnZXMvYWxpZ25lci9zcGVjL2hlbHBlci1zcGVjLmNvZmZlZSIKICBdLAogICJuYW1lcyI6IFtdLAogICJtYXBwaW5ncyI6ICJBQUFBO0FBQUEsTUFBQSw0Q0FBQTs7QUFBQSxFQUFBLE1BQUEsR0FBaUIsT0FBQSxDQUFRLGVBQVIsQ0FBakIsQ0FBQTs7QUFBQSxFQUNBLGNBQUEsR0FBaUIsT0FBQSxDQUFRLHdCQUFSLENBRGpCLENBQUE7O0FBQUEsRUFFQSxJQUFBLEdBQWlCLE9BQUEsQ0FBUSxNQUFSLENBRmpCLENBQUE7O0FBQUEsRUFHQSxPQUFBLEdBQWlCLE9BQUEsQ0FBUSxXQUFSLENBSGpCLENBQUE7O0FBQUEsRUFJQyxRQUFTLE9BQUEsQ0FBUSxNQUFSLEVBQVQsS0FKRCxDQUFBOztBQUFBLEVBTUEsUUFBQSxDQUFTLFFBQVQsRUFBbUIsU0FBQSxHQUFBO0FBQ2pCLFFBQUEsY0FBQTtBQUFBLElBQUEsTUFBQSxHQUFTLElBQVQsQ0FBQTtBQUFBLElBQ0EsTUFBQSxHQUFTLElBRFQsQ0FBQTtBQUFBLElBR0EsVUFBQSxDQUFXLFNBQUEsR0FBQTtBQUNULE1BQUEsSUFBSSxDQUFDLE9BQU8sQ0FBQyxRQUFiLENBQXNCLENBQUMsSUFBSSxDQUFDLElBQUwsQ0FBVSxTQUFWLEVBQXFCLFVBQXJCLENBQUQsQ0FBdEIsQ0FBQSxDQUFBO0FBQUEsTUFFQSxlQUFBLENBQWdCLFNBQUEsR0FBQTtlQUNkLElBQUksQ0FBQyxRQUFRLENBQUMsZUFBZCxDQUE4Qix3QkFBOUIsRUFEYztNQUFBLENBQWhCLENBRkEsQ0FBQTtBQUFBLE1BS0EsZUFBQSxDQUFnQixTQUFBLEdBQUE7ZUFDZCxJQUFJLENBQUMsUUFBUSxDQUFDLGVBQWQsQ0FBOEIsU0FBOUIsRUFEYztNQUFBLENBQWhCLENBTEEsQ0FBQTtBQUFBLE1BUUEsZUFBQSxDQUFnQixT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
+
+//# sourceURL=/home/alenz/.atom/packages/aligner/spec/helper-spec.coffee

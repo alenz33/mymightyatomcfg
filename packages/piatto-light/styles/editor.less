@@ -1,0 +1,56 @@
+atom-text-editor,
+:host {
+  background-color: @syntax-background-color;
+  color: @syntax-text-color;
+
+  .line.cursor-line {
+    background-color: @dark-white;
+  }
+  .cursor {
+    border-left: 2px solid @syntax-cursor-color;
+  }
+
+  .selection .region {
+    background-color: @syntax-selection-color;
+  }
+
+  .bracket-matcher .region {
+    border-bottom: 1px solid @blue;
+    box-sizing: border-box;
+  }
+
+  .invisible, .invisible-character, .indent-guide, .wrap-guide {
+    color: @light-grey;
+  }
+
+  .gutter {
+
+    .line-number {
+      color: @syntax-gutter-text-color;
+
+      &.git-line-removed:before {
+        bottom: -3px;
+      }
+      &.git-line-removed:after {
+        content: "";
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        width: 25px;
+        border-bottom: 1px dotted @red;
+        pointer-events: none;
+      }
+
+      &.cursor-line {
+        color: @light-black;
+      }
+
+    }
+  }
+
+  .gutter .line-number.folded,
+  .gutter .line-number:after,
+  .fold-marker:after {
+    color: @dark-grey;
+  }
+}

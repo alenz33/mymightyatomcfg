@@ -1,0 +1,22 @@
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.addEventListener = addEventListener;
+exports.insertBefore = insertBefore;
+
+var _atom = require('atom');
+
+'use babel';
+
+function addEventListener(el, event, cb) {
+  el.addEventListener(event, cb);
+  return new _atom.Disposable(function () {
+    return el.removeEventListener(event, cb);
+  });
+}
+
+function insertBefore(targetNode, referenceNode) {
+  referenceNode.parentNode.insertBefore(targetNode, referenceNode);
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL2FsZW56Ly5hdG9tL3BhY2thZ2VzL3RyZWUtdmlldy1naXQtYnJhbmNoL2xpYi91dGlscy5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7b0JBQ3lCLE1BQU07O0FBRC9CLFdBQVcsQ0FBQzs7QUFHTCxTQUFTLGdCQUFnQixDQUFDLEVBQUUsRUFBRSxLQUFLLEVBQUUsRUFBRSxFQUFFO0FBQzlDLElBQUUsQ0FBQyxnQkFBZ0IsQ0FBQyxLQUFLLEVBQUUsRUFBRSxDQUFDLENBQUM7QUFDL0IsU0FBTyxxQkFBZTtXQUFNLEVBQUUsQ0FBQyxtQkFBbUIsQ0FBQyxLQUFLLEVBQUUsRUFBRSxDQUFDO0dBQUEsQ0FBQyxDQUFDO0NBQ2hFOztBQUVNLFNBQVMsWUFBWSxDQUFDLFVBQVUsRUFBRSxhQUFhLEVBQUU7QUFDdEQsZUFBYSxDQUFDLFVBQVUsQ0FBQyxZQUFZLENBQUMsVUFBVSxFQUFFLGFBQWEsQ0FBQyxDQUFDO0NBQ2xFIiwiZmlsZSI6Ii9ob21lL2FsZW56Ly5hdG9tL3BhY2thZ2VzL3RyZWUtdmlldy1naXQtYnJhbmNoL2xpYi91dGlscy5qcyIsInNvdXJjZXNDb250ZW50IjpbIid1c2UgYmFiZWwnO1xuaW1wb3J0IHtEaXNwb3NhYmxlfSBmcm9tICdhdG9tJztcblxuZXhwb3J0IGZ1bmN0aW9uIGFkZEV2ZW50TGlzdGVuZXIoZWwsIGV2ZW50LCBjYikge1xuICBlbC5hZGRFdmVudExpc3RlbmVyKGV2ZW50LCBjYik7XG4gIHJldHVybiBuZXcgRGlzcG9zYWJsZSgoKSA9PiBlbC5yZW1vdmVFdmVudExpc3RlbmVyKGV2ZW50LCBjYikpO1xufVxuXG5leHBvcnQgZnVuY3Rpb24gaW5zZXJ0QmVmb3JlKHRhcmdldE5vZGUsIHJlZmVyZW5jZU5vZGUpIHtcbiAgcmVmZXJlbmNlTm9kZS5wYXJlbnROb2RlLmluc2VydEJlZm9yZSh0YXJnZXROb2RlLCByZWZlcmVuY2VOb2RlKTtcbn1cbiJdfQ==
+//# sourceURL=/home/alenz/.atom/packages/tree-view-git-branch/lib/utils.js

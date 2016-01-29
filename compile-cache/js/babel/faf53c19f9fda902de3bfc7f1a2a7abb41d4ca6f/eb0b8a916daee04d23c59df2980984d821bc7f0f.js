@@ -1,0 +1,76 @@
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.activate = activate;
+exports.deactivate = deactivate;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _path = require('path');
+
+var _atom = require('atom');
+
+var _treeViewGitRepositoryJs = require('./tree-view-git-repository.js');
+
+var _treeViewGitRepositoryJs2 = _interopRequireDefault(_treeViewGitRepositoryJs);
+
+'use babel';
+
+var disposables;
+
+function activate() {
+  disposables = new _atom.CompositeDisposable(atom.project.onDidChangePaths(update), atom.commands.add('atom-workspace', 'tree-view-git-branch:reload', update));
+  update();
+}
+
+function deactivate() {
+  disposables.dispose();
+  disposables = null;
+}
+
+// maps repositories to their respective view
+var treeViewGitRepositories = new Map();
+
+function update() {
+  Promise.resolve(atom.packages.isPackageLoaded('tree-view') && atom.packages.activatePackage('tree-view')).then(function (treeViewPkg) {
+    // do nothing if the tree view packages isn't loaded
+    if (!treeViewPkg) return;
+
+    var treeView = treeViewPkg.mainModule.createView();
+    var treeViewEl = atom.views.getView(treeView);
+    var repositories = atom.project.getRepositories();
+
+    // remove old repositories
+    for (var repository of treeViewGitRepositories.keys()) {
+      // don't remove a repo that's still open
+      if (repositories.indexOf(repository) > -1) continue;
+
+      treeViewGitRepositories.get(repository).destroy();
+      treeViewGitRepositories['delete'](repository);
+    }
+
+    // update already tracked repositories and add new ones
+    for (var repository of repositories) {
+      // skip if project root isn't a git repository
+      if (!repository) continue;
+
+      if (treeViewGitRepositories.has(repository)) {
+        treeViewGitRepositories.get(repository).update();
+      } else {
+        var projectPath = (0, _path.dirname)(repository.getPath());
+        var projectRootEl = getProjectRootEl(treeViewEl, projectPath);
+        treeViewGitRepositories.set(repository, (0, _treeViewGitRepositoryJs2['default'])(repository, projectRootEl));
+      }
+    }
+  })['catch'](function (error) {
+    return console.error(error.message, error.stack);
+  });
+}
+
+function getProjectRootEl(treeViewEl, path) {
+  var el = treeViewEl.querySelector('[data-path^="' + path.replace(/\\/g, '\\\\') + '"]');
+  while (!el.classList.contains('project-root')) el = el.parentNode;
+  return el;
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL2FsZW56Ly5hdG9tL3BhY2thZ2VzL3RyZWUtdmlldy1naXQtYnJhbmNoL2xpYi9tYWluLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7O29CQUNzQixNQUFNOztvQkFDTSxNQUFNOzt1Q0FDTiwrQkFBK0I7Ozs7QUFIakUsV0FBVyxDQUFDOztBQUtaLElBQUksV0FBVyxDQUFDOztBQUVULFNBQVMsUUFBUSxHQUFHO0FBQ3pCLGFBQVcsR0FBRyw4QkFDWixJQUFJLENBQUMsT0FBTyxDQUFDLGdCQUFnQixDQUFDLE1BQU0sQ0FBQyxFQUNyQyxJQUFJLENBQUMsUUFBUSxDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsRUFBRSw2QkFBNkIsRUFBRSxNQUFNLENBQUMsQ0FDM0UsQ0FBQztBQUNGLFFBQU0sRUFBRSxDQUFDO0NBQ1Y7O0FBRU0sU0FBUyxVQUFVLEdBQUc7QUFDM0IsYUFBVyxDQUFDLE9BQU8sRUFBRSxDQUFDO0FBQ3RCLGFBQVcsR0FBRyxJQUFJLENBQUM7Q0FDcEI7OztBQUdELElBQUksdUJBQXVCLEdBQUcsSUFBSSxHQUFHLEVBQUUsQ0FBQzs7QUFFeEMsU0FBUyxNQUFNLEdBQUc7QUFDaEIsU0FBTyxDQUFDLE9BQU8sQ0FDYixJQUFJLENBQUMsUUFBUSxDQUFDLGVBQWUsQ0FBQyxXQUFXLENBQUMsSUFDMUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxlQUFlLENBQUMsV0FBVyxDQUFDLENBQzNDLENBQUMsSUFBSSxDQUFDLFVBQUEsV0FBVyxFQUFJOztBQUVwQixRQUFHLENBQUMsV0FBVyxFQUFFLE9BQU87O0FBRXhCLFFBQUksUUFBUSxHQUFHLFdBQVcsQ0FBQyxVQUFVLENBQUMsVUFBVSxFQUFFLENBQUM7QUFDbkQsUUFBSSxVQUFVLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsUUFBUSxDQUFDLENBQUM7QUFDOUMsUUFBSSxZQUFZLEdBQUcsSUFBSSxDQUFDLE9BQU8sQ0FBQyxlQUFlLEVBQUUsQ0FBQzs7O0FBR2xELFNBQUksSUFBSSxVQUFVLElBQUksdUJBQXVCLENBQUMsSUFBSSxFQUFFLEVBQUU7O0FBRXBELFVBQUcsWUFBWSxDQUFDLE9BQU8sQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLENBQUMsRUFBRSxTQUFTOztBQUVuRCw2QkFBdUIsQ0FBQyxHQUFHLENBQUMsVUFBVSxDQUFDLENBQUMsT0FBTyxFQUFFLENBQUM7QUFDbEQsNkJBQXVCLFVBQU8sQ0FBQyxVQUFVLENBQUMsQ0FBQztLQUM1Qzs7O0FBR0QsU0FBSSxJQUFJLFVBQVUsSUFBSSxZQUFZLEVBQUU7O0FBRWxDLFVBQUcsQ0FBQyxVQUFVLEVBQUUsU0FBUzs7QUFFekIsVUFBRyx1QkFBdUIsQ0FBQyxHQUFHLENBQUMsVUFBVSxDQUFDLEVBQUU7QUFDMUMsK0JBQXVCLENBQUMsR0FBRyxDQUFDLFVBQVUsQ0FBQyxDQUFDLE1BQU0sRUFBRSxDQUFDO09BQ2xELE1BQU07QUFDTCxZQUFJLFdBQVcsR0FBRyxtQkFBUSxVQUFVLENBQUMsT0FBTyxFQUFFLENBQUMsQ0FBQztBQUNoRCxZQUFJLGFBQWEsR0FBRyxnQkFBZ0IsQ0FBQyxVQUFVLEVBQUUsV0FBVyxDQUFDLENBQUM7QUFDOUQsK0JBQXVCLENBQUMsR0FBRyxDQUN6QixVQUFVLEVBQUUsMENBQXNCLFVBQVUsRUFBRSxhQUFhLENBQUMsQ0FDN0QsQ0FBQztPQUNIO0tBQ0Y7R0FDRixDQUFDLFNBQU0sQ0FBQyxVQUFBLEtBQUs7V0FBSSxPQUFPLENBQUMsS0FBSyxDQUFDLEtBQUssQ0FBQyxPQUFPLEVBQUUsS0FBSyxDQUFDLEtBQUssQ0FBQztHQUFBLENBQUMsQ0FBQztDQUM5RDs7QUFFRCxTQUFTLGdCQUFnQixDQUFDLFVBQVUsRUFBRSxJQUFJLEVBQUU7QUFDMUMsTUFBSSxFQUFFLEdBQUcsVUFBVSxDQUFDLGFBQWEsbUJBQWlCLElBQUksQ0FBQyxPQUFPLENBQUMsS0FBSyxFQUFFLE1BQU0sQ0FBQyxRQUFLLENBQUM7QUFDbkYsU0FBTSxDQUFDLEVBQUUsQ0FBQyxTQUFTLENBQUMsUUFBUSxDQUFDLGNBQWMsQ0FBQyxFQUFFLEVBQUUsR0FBRyxFQUFFLENBQUMsVUFBVSxDQUFDO0FBQ2pFLFNBQU8sRUFBRSxDQUFDO0NBQ1giLCJmaWxlIjoiL2hvbWUvYWxlbnovLmF0b20vcGFja2FnZXMvdHJlZS12aWV3LWdpdC1icmFuY2gvbGliL21haW4uanMiLCJzb3VyY2VzQ29udGVudCI6WyIndXNlIGJhYmVsJztcbmltcG9ydCB7ZGlybmFtZX0gZnJvbSAncGF0aCc7XG5pbXBvcnQge0NvbXBvc2l0ZURpc3Bvc2FibGV9IGZyb20gJ2F0b20nO1xuaW1wb3J0IHRyZWVWaWV3R2l0UmVwb3NpdG9yeSBmcm9tICcuL3RyZWUtdmlldy1naXQtcmVwb3NpdG9yeS5qcyc7XG5cbnZhciBkaXNwb3NhYmxlcztcblxuZXhwb3J0IGZ1bmN0aW9uIGFjdGl2YXRlKCkge1xuICBkaXNwb3NhYmxlcyA9IG5ldyBDb21wb3NpdGVEaXNwb3NhYmxlKFxuICAgIGF0b20ucHJvamVjdC5vbkRpZENoYW5nZVBhdGhzKHVwZGF0ZSksXG4gICAgYXRvbS5jb21tYW5kcy5hZGQoJ2F0b20td29ya3NwYWNlJywgJ3RyZWUtdmlldy1naXQtYnJhbmNoOnJlbG9hZCcsIHVwZGF0ZSksXG4gICk7XG4gIHVwZGF0ZSgpO1xufVxuXG5leHBvcnQgZnVuY3Rpb24gZGVhY3RpdmF0ZSgpIHtcbiAgZGlzcG9zYWJsZXMuZGlzcG9zZSgpO1xuICBkaXNwb3NhYmxlcyA9IG51bGw7XG59XG5cbi8vIG1hcHMgcmVwb3NpdG9yaWVzIHRvIHRoZWlyIHJlc3BlY3RpdmUgdmlld1xudmFyIHRyZWVWaWV3R2l0UmVwb3NpdG9yaWVzID0gbmV3IE1hcCgpO1xuXG5mdW5jdGlvbiB1cGRhdGUoKSB7XG4gIFByb21pc2UucmVzb2x2ZShcbiAgICBhdG9tLnBhY2thZ2VzLmlzUGFja2FnZUxvYWRlZCgndHJlZS12aWV3JykgJiZcbiAgICBhdG9tLnBhY2thZ2VzLmFjdGl2YXRlUGFja2FnZSgndHJlZS12aWV3JylcbiAgKS50aGVuKHRyZWVWaWV3UGtnID0+IHtcbiAgICAvLyBkbyBub3RoaW5nIGlmIHRoZSB0cmVlIHZpZXcgcGFja2FnZXMgaXNuJ3QgbG9hZGVkXG4gICAgaWYoIXRyZWVWaWV3UGtnKSByZXR1cm47XG5cbiAgICB2YXIgdHJlZVZpZXcgPSB0cmVlVmlld1BrZy5tYWluTW9kdWxlLmNyZWF0ZVZpZXcoKTtcbiAgICB2YXIgdHJlZVZpZXdFbCA9IGF0b20udmlld3MuZ2V0Vmlldyh0cmVlVmlldyk7XG4gICAgdmFyIHJlcG9zaXRvcmllcyA9IGF0b20ucHJvamVjdC5nZXRSZXBvc2l0b3JpZXMoKTtcblxuICAgIC8vIHJlbW92ZSBvbGQgcmVwb3NpdG9yaWVzXG4gICAgZm9yKGxldCByZXBvc2l0b3J5IG9mIHRyZWVWaWV3R2l0UmVwb3NpdG9yaWVzLmtleXMoKSkge1xuICAgICAgLy8gZG9uJ3QgcmVtb3ZlIGEgcmVwbyB0aGF0J3Mgc3RpbGwgb3BlblxuICAgICAgaWYocmVwb3NpdG9yaWVzLmluZGV4T2YocmVwb3NpdG9yeSkgPiAtMSkgY29udGludWU7XG5cbiAgICAgIHRyZWVWaWV3R2l0UmVwb3NpdG9yaWVzLmdldChyZXBvc2l0b3J5KS5kZXN0cm95KCk7XG4gICAgICB0cmVlVmlld0dpdFJlcG9zaXRvcmllcy5kZWxldGUocmVwb3NpdG9yeSk7XG4gICAgfVxuXG4gICAgLy8gdXBkYXRlIGFscmVhZHkgdHJhY2tlZCByZXBvc2l0b3JpZXMgYW5kIGFkZCBuZXcgb25lc1xuICAgIGZvcihsZXQgcmVwb3NpdG9yeSBvZiByZXBvc2l0b3JpZXMpIHtcbiAgICAgIC8vIHNraXAgaWYgcHJvamVjdCByb290IGlzbid0IGEgZ2l0IHJlcG9zaXRvcnlcbiAgICAgIGlmKCFyZXBvc2l0b3J5KSBjb250aW51ZTtcblxuICAgICAgaWYodHJlZVZpZXdHaXRSZXBvc2l0b3JpZXMuaGFzKHJlcG9zaXRvcnkpKSB7XG4gICAgICAgIHRyZWVWaWV3R2l0UmVwb3NpdG9yaWVzLmdldChyZXBvc2l0b3J5KS51cGRhdGUoKTtcbiAgICAgIH0gZWxzZSB7XG4gICAgICAgIGxldCBwcm9qZWN0UGF0aCA9IGRpcm5hbWUocmVwb3NpdG9yeS5nZXRQYXRoKCkpO1xuICAgICAgICBsZXQgcHJvamVjdFJvb3RFbCA9IGdldFByb2plY3RSb290RWwodHJlZVZpZXdFbCwgcHJvamVjdFBhdGgpO1xuICAgICAgICB0cmVlVmlld0dpdFJlcG9zaXRvcmllcy5zZXQoXG4gICAgICAgICAgcmVwb3NpdG9yeSwgdHJlZVZpZXdHaXRSZXBvc2l0b3J5KHJlcG9zaXRvcnksIHByb2plY3RSb290RWwpXG4gICAgICAgICk7XG4gICAgICB9XG4gICAgfVxuICB9KS5jYXRjaChlcnJvciA9PiBjb25zb2xlLmVycm9yKGVycm9yLm1lc3NhZ2UsIGVycm9yLnN0YWNrKSk7XG59XG5cbmZ1bmN0aW9uIGdldFByb2plY3RSb290RWwodHJlZVZpZXdFbCwgcGF0aCkge1xuICB2YXIgZWwgPSB0cmVlVmlld0VsLnF1ZXJ5U2VsZWN0b3IoYFtkYXRhLXBhdGhePVwiJHtwYXRoLnJlcGxhY2UoL1xcXFwvZywgJ1xcXFxcXFxcJyl9XCJdYCk7XG4gIHdoaWxlKCFlbC5jbGFzc0xpc3QuY29udGFpbnMoJ3Byb2plY3Qtcm9vdCcpKSBlbCA9IGVsLnBhcmVudE5vZGU7XG4gIHJldHVybiBlbDtcbn1cbiJdfQ==
+//# sourceURL=/home/alenz/.atom/packages/tree-view-git-branch/lib/main.js

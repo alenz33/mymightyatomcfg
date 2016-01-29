@@ -1,0 +1,85 @@
+{
+  "name": "tree-view-bundler",
+  "main": "./lib/tree-view-bundler",
+  "version": "0.0.3",
+  "description": "Show bundled gems in your project tree view",
+  "keywords": [
+    "ruby",
+    "bundler",
+    "gem",
+    "tree-view"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shemerey/atom-tree-view-bundler.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+    "underscore-plus": "^1.0.0"
+  },
+  "readme": "# Tree View Bundler package\n\nThis package looks into your project folder and adds bundled gems into your source tree view. It depends on `Gemfile` and you will have same list of gems as you do by calling `$ bundle show` inside your project folder.\n\n![A screenshot of your package](https://raw.githubusercontent.com/shemerey/atom-tree-view-bundler/master/assets/screen.png)\n\n## ToDo\n\n* [x] Add gemset detection and auto-add it to tree-view  https://github.com/shemerey/atom-tree-view-bundler/issues/1\n* [ ] Add some Specs\n* [ ] Search In Gems https://github.com/shemerey/atom-tree-view-bundler/issues/2\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/shemerey/atom-tree-view-bundler/issues"
+  },
+  "homepage": "https://github.com/shemerey/atom-tree-view-bundler#readme",
+  "_id": "tree-view-bundler@0.0.3",
+  "_shasum": "b3a416d5175cce51abb6cbcf5d9d6a14b72987c5",
+  "_resolved": "file:../d-115112-28743-1m3ph1w/package.tgz",
+  "_from": "../d-115112-28743-1m3ph1w/package.tgz",
+  "_atomModuleCache": {
+    "version": 1,
+    "dependencies": [
+      {
+        "name": "underscore-plus",
+        "version": "1.6.6",
+        "path": "node_modules/underscore-plus/lib/underscore-plus.js"
+      },
+      {
+        "name": "underscore",
+        "version": "1.6.0",
+        "path": "node_modules/underscore-plus/node_modules/underscore/underscore.js"
+      }
+    ],
+    "extensions": {
+      ".coffee": [
+        "lib/tree-view-bundler-view.coffee",
+        "lib/tree-view-bundler.coffee"
+      ],
+      ".js": [
+        "node_modules/underscore-plus/lib/underscore-plus.js",
+        "node_modules/underscore-plus/node_modules/underscore/underscore-min.js",
+        "node_modules/underscore-plus/node_modules/underscore/underscore.js"
+      ],
+      ".json": [
+        "node_modules/underscore-plus/node_modules/underscore/package.json",
+        "node_modules/underscore-plus/package.json",
+        "package.json"
+      ]
+    },
+    "folders": [
+      {
+        "paths": [
+          "lib",
+          "",
+          "spec"
+        ],
+        "dependencies": {
+          "underscore-plus": "^1.0.0"
+        }
+      },
+      {
+        "paths": [
+          "node_modules/underscore-plus/lib",
+          "node_modules/underscore-plus"
+        ],
+        "dependencies": {
+          "underscore": "~1.6.0"
+        }
+      }
+    ]
+  }
+}

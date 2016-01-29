@@ -1,0 +1,44 @@
+{
+  "name": "wombat-light-syntax",
+  "theme": "syntax",
+  "version": "1.1.0",
+  "description": "Wombat Atom Light Syntax Theme. ( Python, NodeJS, Markdown, PHP, HTML, CSS )",
+  "keywords": [
+    "wombat",
+    "light",
+    "syntax",
+    "python",
+    "php",
+    "javascript",
+    "nodejs",
+    "markdown"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/promek/wombat-light-syntax.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "readme": "# Wombat Light Syntax Theme\n\nAn [Atom](https://atom.io/) syntax theme. ( Python, NodeJS, Markdown, PHP, HTML, CSS )\n\n* Atom port of the Vim [Wombat](http://www.vim.org/scripts/script.php?script_id=1778) color scheme.\n* Converted from the [One Light Syntax](https://github.com/atom/one-light-syntax)\n\n## Screenshot\n\n* Python\n\n![python](https://cloud.githubusercontent.com/assets/4887563/8381550/11b29d8e-1c35-11e5-9279-fdaed5ac1c03.png)\n\n* Markdown\n\n![markdown](https://cloud.githubusercontent.com/assets/4887563/8381544/0cb1b31a-1c35-11e5-8376-213473894a99.png)\n\n* NodeJS\n\n![node](https://cloud.githubusercontent.com/assets/4887563/8381546/0eb08ab0-1c35-11e5-8348-a233ab754224.png)\n\n* HTML\n\n![html](https://cloud.githubusercontent.com/assets/4887563/8381539/09e3218c-1c35-11e5-9ff8-c0f8fd03480a.png)\n\n* CSS\n\n![css](https://cloud.githubusercontent.com/assets/4887563/8381511/dd520c00-1c34-11e5-954d-f4008f5c7581.png)\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/promek/wombat-light-syntax/issues"
+  },
+  "homepage": "https://github.com/promek/wombat-light-syntax#readme",
+  "_id": "wombat-light-syntax@1.1.0",
+  "_shasum": "0385da077b6ba4416986c0ee2b241fe515b2674a",
+  "_resolved": "file:../d-116028-32597-sop438/package.tgz",
+  "_from": "../d-116028-32597-sop438/package.tgz",
+  "_atomModuleCache": {
+    "version": 1,
+    "dependencies": [],
+    "extensions": {
+      ".json": [
+        "package.json"
+      ]
+    },
+    "folders": []
+  }
+}
